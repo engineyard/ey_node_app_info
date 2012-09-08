@@ -1,0 +1,97 @@
+#!/usr/bin/env node
+
+var optparse = require('optparse'),
+  fs = require('fs');
+
+var switches = [
+  ['--package-json-path PATH', 'Parse a specific package.json file'],
+  ['--available-json-path PATH', 'Load a specific available_versions.json file'],
+  ['--verbose', 'Debug stuff'],
+  ['-?', '--help', 'Shows help sections'],
+];
+
+var commands;
+var options = {
+  packageJsonPath: './package.json',
+  availableJsonPath: '/opt/nodejs/nodejs_available_versions.json',
+  verbose: false,
+};
+
+var parser = new optparse.OptionParser(switches);
+parser.banner = '\n';
+parser.banner += 'Usage: `ey_node_package_info CMD`\n';
+parser.banner += '\n'
+parser.banner += 'CMD is one of: stuff derp hurp\n';
+
+
+parser.on('help', function() {
+  console.log(parser.toString());
+  parser.halt();
+});
+
+parser.on('package-json-path', function(ignore, path) {
+  options.packageJsonPath = path;
+});
+
+parser.on('available-json-path', function(ignore, path) {
+  options.availableJsonPath = path;
+});
+
+parser.on('verbose', function() {
+  options.verbose = true;
+});
+
+// Fail if given a bad option
+parser.on(function(opt) {
+  console.error('Invalid option: ', opt);
+  process.exit(1);
+})
+
+var parseResult = parser.parse(process.argv || process.ARGV)
+if(! parseResult ) {
+  process.exit(1);
+} else {
+  commands = parseResult.slice(2);
+}
+
+var package = require('./../lib/package').createFrom(options);
+
+if(options.verbose) {
+  console.log(options, command);
+}
+
+switch(commands[0]) {
+  case 'engine-version': // Calculate an acceptable node version
+    var version = package.result();
+    if(!version) {
+      msg = '--> Could not find a Node.js version to use:\n' +
+      '--> Requested in package.json: ' + package.requested + '\n' +
+      '--> Available on your instance: ' + package.available.join(", ") + '\n';
+      console.error(msg);
+      process.exit(1);
+    }
+    console.log(version);
+    break;
+
+  case 'command':
+    var named = commands[1];
+    var value = package.commands[named];
+    if(value) {
+      console.log('npm', named);
+    } else {
+      console.error('No npm scripts key for', named);
+      process.exit(1);
+    }
+    break;
+
+  case 'engine-install': // Emerge the calculated version if its not installed
+    break;
+
+  case 'dump-env': // Dump a bash environment variable filled file to stdout
+    break;
+
+  default:
+    console.log("Invalid command!");
+    console.log(parser.toString());
+}
+

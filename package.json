@@ -8,16 +8,23 @@
   },
   "dependencies": {
     "assert": "~0.4.9",
-    "vows": "~0.6.4"
+    "vows": "~0.6.4",
+    "optparse": "~1.0.3",
+    "semver": "~1.0.14",
+    "chai": "~1.2.0"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "node ./test/* --spec"
+    "test": "node ./test/*.js --spec"
+  },
+  "bin": {
+    "ey_node_package_info": "./bin/ey_node_package_info"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/engineyard/ey_node_package_info.git"
   },
+  "private": true,
   "keywords": [
     "ey",
     "package",

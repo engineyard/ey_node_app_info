@@ -1,7 +1,7 @@
 ey_node_package_info
 ====================
 
-Parses a Node.js app's package.json file to figure out which node version and commands to use. 
+Parses a Node.js app's package.json file to figure out which node version and commands to use.
 
 
 EY Node Package Info
@@ -16,6 +16,12 @@ Internal tool to extract information about a Node.js application.
 
 Examples:
 ---
+
+
+ey_node_package_info --package-json ./test/fixtures/missing_engine.json
+ey_node_package_info # assumes --package-json of ./package.json
+
+
 
 Given:
 
@@ -42,6 +48,9 @@ ey-node-package-info --command start # "node ./bin/web-server"
 ey-node-package-info --command predeploy # "..."
 ey-node-package-info --command postdeploy # "..."
 ey-node-package-info --command migrate # "..."
+
+ey-node-package-info # with no args writes out node_app.env
+
 
 Given:
 
@@ -70,4 +79,10 @@ migrate: no-op
 start: look for {app,web,server}.{js,coffee} # app.js
 
 
+
+Version support:
+
+only 0.8.x or 0.8.7
+
+/>=0.6
 
