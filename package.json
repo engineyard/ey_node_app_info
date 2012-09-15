@@ -1,5 +1,5 @@
 {
-  "name": "ey_node_package_info",
+  "name": "ey_node_app_info",
   "version": "0.1.0",
   "description": "Parses package.json and provides node paths and shell commands.",
   "main": "index.js",
@@ -18,11 +18,11 @@
     "test": "node ./test/*.js --spec"
   },
   "bin": {
-    "ey_node_package_info": "./bin/ey_node_package_info"
+    "ey_node_app_info": "./bin/ey_node_app_info"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/engineyard/ey_node_package_info.git"
+    "url": "git://github.com/engineyard/ey_node_app_info.git"
   },
   "private": true,
   "keywords": [

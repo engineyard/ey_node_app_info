@@ -1,0 +1,106 @@
+#!/usr/bin/env node
+
+var optparse = require('optparse'),
+  fs = require('fs');
+
+var switches = [
+  ['--app PATH', 'The path to a Node.js application.'],
+  ['--available PATH', 'Load a specific available_versions.json file'],
+  ['--verbose', 'Debug stuff'],
+  ['-?', '--help', 'Shows help sections'],
+];
+
+var commands;
+var options = {
+  appPath: '.',
+  availablePath: '/opt/nodejs/nodejs_available_versions.json',
+  verbose: false,
+};
+
+var parser = new optparse.OptionParser(switches);
+parser.banner = '\n';
+parser.banner += 'Usage: `ey_node_app_info <name>`\n';
+parser.banner += '\n'
+parser.banner += '<name> is one of: engine-version command env\n';
+
+parser.on('help', function() {
+  console.log(parser.toString());
+  parser.halt();
+});
+
+parser.on('app', function(ignore, path) {
+  options.appPath = path;
+});
+
+parser.on('available', function(ignore, path) {
+  options.availablePath = path;
+});
+
+parser.on('verbose', function() {
+  options.verbose = true;
+});
+
+// Fail if given a bad option
+parser.on(function(opt) {
+  console.error('Invalid option: ', opt);
+  process.exit(1);
+})
+
+var parseResult = parser.parse(process.argv || process.ARGV)
+if(! parseResult ) {
+  process.exit(1);
+} else {
+  commands = parseResult.slice(2);
+}
+
+var nodeApp = require('./../lib/node_app').createFrom(options);
+
+if(options.verbose) {
+  console.log(options, command);
+}
+
+switch(commands[0]) {
+  case 'engine-version': // Calculate an acceptable node version
+    var version = nodeApp.result;
+    if(!version) {
+      msg = '--> Could not find a Node.js version to use.\n' +
+      '--> Requested in package.json: ' + nodeApp.requested + '\n' +
+      '--> Available on your instance: ' + nodeApp.available.join(", ") + '\n' +
+      '--> Newer versions may be available if you Upgrade your environment.\n';
+      console.error(msg);
+      process.exit(1);
+    }
+    console.log(version);
+    break;
+
+  case 'command':
+    var named = commands[1];
+    var value = nodeApp.commands[named];
+    if(value) {
+      console.log('npm run-script', named);
+    } else {
+      if ('start' == named) {
+        if (nodeApp.fallbackStartCommand) {
+          console.log(nodeApp.fallbackStartCommand);
+        } else {
+          console.error('No `npm start` specified.');
+          process.exit(1);
+        }
+      } else {
+        console.error('No npm scripts key for', named);
+        process.exit(1);
+      }
+    }
+    break;
+
+  case 'engine-install': // Emerge the calculated version if its not installed
+    break;
+
+  case 'dump-env': // Dump a bash environment variable filled file to stdout
+    break;
+
+  default:
+    console.log("Invalid command: `"+ commands[0] +"`");
+    console.log(parser.toString());
+}
+

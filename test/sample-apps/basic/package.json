@@ -13,7 +13,9 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node ./bin/start.js"
+    "start": "node ./bin/start.js",
+    "predeploy": "node ./bin/pre.js",
+    "postdeploy": "node ./bin/post.js"
   },
   "bin": {
     "made_up": "./bin/start.js"
