@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 var optparse = require('optparse'),
-  fs = require('fs');
+  fs = require('fs'),
+  nodeApp = null;
 
 var switches = [
   ['--app PATH', 'The path to a Node.js application.'],
@@ -53,7 +54,15 @@ if(! parseResult ) {
   commands = parseResult.slice(2);
 }
 
-var nodeApp = require('./../lib/node_app').createFrom(options);
+var primaryCommand = commands[0];
+var secondaryCommand = commands[1];
+
+if (! primaryCommand) {
+  console.error("Incorrect usage. See `ey_node_app_info --help`");
+  process.exit(1);
+} else {
+  nodeApp = require('./../lib/node_app').createFrom(options);
+}
 
 if(options.verbose) {
   console.log(options, command);
