@@ -86,7 +86,7 @@ switch(commands[0]) {
     var named = commands[1];
     var value = nodeApp.commands[named];
     if(value) {
-      console.log('npm run-script', named);
+      console.log(value);
     } else {
       if ('start' == named) {
         if (nodeApp.fallbackStartCommand) {
@@ -99,12 +99,6 @@ switch(commands[0]) {
         process.exit(1);
       }
     }
-    break;
-
-  case 'engine-install': // Emerge the calculated version if its not installed
-    break;
-
-  case 'dump-env': // Dump a bash environment variable filled file to stdout
     break;
 
   default:

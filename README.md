@@ -17,9 +17,5 @@ Examples:
 
     ey_node_app_info command start --app /path/to/app
     # output like 'node ./app.js' or 'npm start'
-
-    ey_node_app_info command start --app /path/to/app
-    # output like 'node ./app.js' or 'npm start'
-
     
 
