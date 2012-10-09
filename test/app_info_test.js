@@ -40,6 +40,15 @@ vows.describe("integrated testing").addBatch({
         "it should return 0.8.7": function(error, stdout, stderr){
           assert.equal("0.8.7\n", stdout);
         }
+      },
+      'when given: check': {
+        topic: function(optionString) {
+          invokeCommand('check', optionString, this.callback);
+        },
+        "it should say package.json exists, exit zero": function(error, stdout, stderr){
+          assert.equal("Found package.json\n", stdout);
+          assert.equal(error, null);
+        }
       }
     },
     'an outdated package.json (version to old to be available)': {
@@ -52,13 +61,13 @@ vows.describe("integrated testing").addBatch({
         },
         "it should blow up with an error message": function(error, stdout, stderr){
           assert.equal(error.code, 1);
-          expect(stderr).to.include("Could not find").include("0.4.0");
+          expect(stdout).to.include("Could not find").include("0.4.0");
         }
       }
     },
     'unspecified engine in package.json': {
       topic: function(available) {
-        return '--app ./test/sample-apps/minimal '+ available;
+        return '--app ./test/sample-apps/minimal ' + available;
       },
       'when asked for engine-version': {
         topic: function(optionString) {
@@ -67,6 +76,38 @@ vows.describe("integrated testing").addBatch({
         "it returns the default version": function(error, stdout, stderr){
           assert.equal(error, null);
           expect(stdout).to.equal("1337.0.0\n");
+        }
+      }
+    },
+    'empty project': {
+      topic: function(available) {
+        return '--app ./test/sample-apps/empty ' + available;
+      },
+      'when given: check': {
+        topic: function(optionString) {
+          invokeCommand('check', optionString, this.callback);
+        },
+        'it says its missing and returns non-zero': function(error, stdout, stderr) {
+          assert.equal("Invalid or missing package.json\n", stdout);
+          assert.equal(error.code, 1);
+        }
+      },
+      'when asked for engine-version': {
+        topic: function(optionString) {
+          invokeCommand('engine-version', optionString, this.callback);
+        },
+        "it returns the default version": function(error, stdout, stderr){
+          assert.equal(error, null);
+          expect(stdout).to.equal("1337.0.0\n");
+        }
+      },
+      'start command': {
+        topic: function(optionString) {
+          invokeCommand('command start', optionString, this.callback);
+        },
+        "gives up and returns nothing": function(error, stdout, stderr){
+          expect(stdout).to.equal("");
+          assert.equal(error.code, 1);
         }
       }
     },

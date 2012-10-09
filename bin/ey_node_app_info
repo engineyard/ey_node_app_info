@@ -68,15 +68,26 @@ if(options.verbose) {
   console.log(options, command);
 }
 
+
 switch(commands[0]) {
+  case 'check':
+    if (nodeApp.parsed) {
+      console.log("Found package.json")
+      process.exit(0);
+    } else {
+      console.log("Invalid or missing package.json")
+      process.exit(1);
+    }
+    break;
+
   case 'engine-version': // Calculate an acceptable node version
     var version = nodeApp.result;
     if(!version) {
-      msg = '--> Could not find a Node.js version to use.\n' +
-      '--> Requested in package.json: ' + nodeApp.requested + '\n' +
-      '--> Available on your instance: ' + nodeApp.available.join(", ") + '\n' +
-      '--> Newer versions may be available if you Upgrade your environment.\n';
-      console.error(msg);
+      msg = 'Could not find a Node.js version to use.\n' +
+      'Requested in package.json: ' + nodeApp.requested + '\n' +
+      'Available on your instance: ' + nodeApp.available.join(", ") + '\n' +
+      'Newer versions may be available if you Upgrade your environment.\n';
+      console.log(msg);
       process.exit(1);
     }
     console.log(version);
